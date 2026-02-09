@@ -7,7 +7,8 @@
 <title>Sender</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; padding: 12px; font-size: 13px; min-height: 100vh; display: flex; flex-direction: column; }
+  html, body { height: 100%; }
+  body { font-family: 'Inter', sans-serif; padding: 12px; font-size: 13px; display: flex; flex-direction: column; }
   label { display: block; margin: 6px 0 2px; font-size: 11px; }
   input[type="range"] { width: 100%; }
   textarea { width: 100%; padding: 4px 6px; font-family: inherit; font-size: 16px; height: 40px; resize: vertical; }
@@ -24,7 +25,7 @@
   button { padding: 6px 12px; cursor: pointer; font-size: 13px; font-family: inherit; }
   .checks label { display: inline; margin-right: 12px; font-size: 13px; }
   .btn-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-  #results { font-family: monospace; font-size: 11px; padding: 8px; margin-top: 8px; flex: 1; min-height: 80px; overflow-y: auto; white-space: pre-wrap; }
+  #results { font-family: monospace; font-size: 11px; padding: 8px; margin-top: 8px; flex: 1; overflow-y: auto; white-space: pre-wrap; border: 1px solid #ddd; }
   @media (max-width: 480px) {
     .row { grid-template-columns: 1fr; }
     button { flex: 1; min-width: 0; }
