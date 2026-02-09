@@ -99,7 +99,7 @@
     if (data.trails !== undefined) trailAmount = data.trails;
     if (data.col1Color !== undefined) { col1Color = data.col1Color; shape2.style.background = data.col1Color; }
     if (data.col2Color !== undefined) { col2Color = data.col2Color; shape1.style.background = data.col2Color; }
-    if (data.pulse) doExplode();
+    if (data.pulse) doBang();
   });
 
   socket.on('ping-test', (data) => { data.receiverGot = Date.now(); socket.emit('pong-test', data); });
@@ -131,8 +131,6 @@
   let col1Color = '#ffffff', col2Color = '#0000ff';
   let currentSize = BASE_SIZE;
   let shapeIdx = 0;
-  let exploding = false, explodeTime = 0;
-  let particles = [];
 
   const clipShapes = [
     ['none', '0'],
@@ -169,23 +167,13 @@
     ctx.fill();
   }
 
-  function doExplode() {
-    exploding = true;
-    explodeTime = Date.now();
-    particles = [];
-    for (let i = 0; i < 60; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = 8 + Math.random() * 18;
-      particles.push({
-        x: sx, y: sy,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: 3 + Math.random() * 16,
-        life: 1
-      });
-    }
-    shape1.style.display = 'none';
-    shape2.style.display = 'none';
+  function doBang() {
+    shapeIdx = (shapeIdx + 1) % clipShapes.length;
+    applyClip(shape1, shapeIdx);
+    applyClip(shape2, shapeIdx);
+    currentSize = 30 + Math.random() * 200;
+    shape1.style.width = shape1.style.height = currentSize + 'px';
+    shape2.style.width = shape2.style.height = currentSize + 'px';
   }
 
   function resizeCanvases() {
@@ -229,53 +217,7 @@
     ctx2.fillRect(0, 0, tc2.width, tc2.height);
     ctx2.globalCompositeOperation = 'source-over';
 
-    if (exploding) {
-      const elapsed = Date.now() - explodeTime;
-      const duration = 600;
-      const convergeStart = 350;
-
-      particles.forEach(p => {
-        if (elapsed < convergeStart) {
-          p.x += p.vx;
-          p.y += p.vy;
-          p.vx *= 0.96;
-          p.vy *= 0.96;
-        } else {
-          const t = (elapsed - convergeStart) / (duration - convergeStart);
-          p.x += (sx - p.x) * 0.2;
-          p.y += (sy - p.y) * 0.2;
-        }
-        p.life = Math.max(0, 1 - elapsed / duration);
-
-        // Draw particle on both canvases
-        const lx1 = p.x - r1.left;
-        const lx2 = p.x - r2.left;
-        const ly = p.y;
-        const a = p.life;
-        ctx1.globalAlpha = a;
-        ctx1.fillStyle = col2Color;
-        ctx1.fillRect(lx1 - p.size / 2, ly - p.size / 2, p.size, p.size);
-        ctx2.globalAlpha = a;
-        ctx2.fillStyle = col1Color;
-        ctx2.fillRect(lx2 - p.size / 2, ly - p.size / 2, p.size, p.size);
-      });
-      ctx1.globalAlpha = 1;
-      ctx2.globalAlpha = 1;
-
-      if (elapsed >= duration) {
-        exploding = false;
-        shape1.style.display = '';
-        shape2.style.display = '';
-        shapeIdx = (shapeIdx + 1) % clipShapes.length;
-        applyClip(shape1, shapeIdx);
-        applyClip(shape2, shapeIdx);
-      }
-
-      requestAnimationFrame(animate);
-      return;
-    }
-
-    // Normal movement
+    // Movement
     const dir = svx > 0 ? 1 : -1;
     const dirY = svy > 0 ? 1 : -1;
     svx = dir * shapeSpeed;
@@ -283,7 +225,6 @@
     sx += svx;
     sy += svy;
 
-    currentSize = BASE_SIZE;
     const half = currentSize / 2;
 
     if (sy - half <= 0) { sy = half; svy = Math.abs(svy); }
