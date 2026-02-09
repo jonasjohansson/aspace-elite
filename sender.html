@@ -7,24 +7,28 @@
 <title>Sender</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; padding: 16px; font-size: 13px; }
-  label { display: block; margin: 8px 0 2px; font-size: 11px; }
+  body { font-family: 'Inter', sans-serif; padding: 12px; font-size: 13px; min-height: 100vh; display: flex; flex-direction: column; }
+  label { display: block; margin: 6px 0 2px; font-size: 11px; }
   input[type="range"] { width: 100%; }
-  textarea { width: 100%; padding: 4px 6px; font-family: inherit; font-size: 13px; height: 40px; resize: vertical; }
-  .row { display: flex; gap: 16px; }
-  .col { flex: 1; }
+  textarea { width: 100%; padding: 4px 6px; font-family: inherit; font-size: 16px; height: 40px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .val { font-family: monospace; font-size: 11px; }
-  input[type="number"] { width: 70px; font-family: monospace; font-size: 12px; padding: 2px 4px; }
+  input[type="number"] { width: 60px; font-family: monospace; font-size: 14px; padding: 2px 4px; }
   .width-row { display: flex; align-items: center; gap: 6px; }
   .width-row input[type="range"] { flex: 1; }
   .reset { font-size: 10px; cursor: pointer; padding: 2px 6px; }
-  .status { margin-bottom: 12px; font-size: 11px; }
+  .status { margin-bottom: 8px; font-size: 11px; }
   .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f44; vertical-align: middle; margin-right: 4px; }
   .dot.on { background: #4f4; }
-  hr { margin: 12px 0; }
-  button { padding: 4px 10px; cursor: pointer; font-size: 12px; font-family: inherit; }
+  hr { margin: 10px 0; }
+  button { padding: 6px 12px; cursor: pointer; font-size: 13px; font-family: inherit; }
   .checks label { display: inline; margin-right: 12px; font-size: 13px; }
-  #results { font-family: monospace; font-size: 11px; padding: 8px; margin-top: 8px; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
+  .btn-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  #results { font-family: monospace; font-size: 11px; padding: 8px; margin-top: 8px; flex: 1; min-height: 80px; overflow-y: auto; white-space: pre-wrap; }
+  @media (max-width: 480px) {
+    .row { grid-template-columns: 1fr; }
+    button { flex: 1; min-width: 0; }
+  }
 </style>
 </head>
 <body>
@@ -72,7 +76,7 @@
 <b>Burst</b> — fires N messages at once and measures how fast the receiver processes all of them (throughput in msg/s).<br>
 <b>Stream</b> — sends continuous updates at 30 or 60fps for 5 seconds to test sustained real-time performance.
 </p>
-<div>
+<div class="btn-grid">
   <button onclick="ping()">Ping x10</button>
   <button onclick="burst(100)">Burst 100</button>
   <button onclick="burst(500)">Burst 500</button>
