@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<title>Sender</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #111; color: #ccc; padding: 16px; font-size: 13px; }
+  h1 { font-size: 16px; color: #fff; margin-bottom: 16px; }
+  label { display: block; margin: 8px 0 2px; font-size: 11px; color: #888; }
+  input[type="range"] { width: 100%; }
+  input[type="text"], textarea { width: 100%; padding: 4px 6px; background: #222; border: 1px solid #333; color: #fff; font-family: inherit; font-size: 13px; }
+  textarea { height: 40px; resize: vertical; }
+  input[type="color"] { border: none; background: none; width: 40px; height: 24px; cursor: pointer; vertical-align: middle; }
+  .row { display: flex; gap: 16px; }
+  .col { flex: 1; }
+  .val { font-family: monospace; font-size: 11px; color: #7FFFD4; }
+  .status { margin-bottom: 12px; font-size: 11px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f44; vertical-align: middle; margin-right: 4px; }
+  .dot.on { background: #4f4; }
+  hr { border: none; border-top: 1px solid #222; margin: 12px 0; }
+  button { padding: 4px 10px; background: #222; border: 1px solid #444; color: #ccc; cursor: pointer; font-size: 12px; font-family: inherit; }
+  button:hover { background: #333; }
+  .checks label { display: inline; margin-right: 12px; font-size: 13px; color: #ccc; }
+  #results { font-family: monospace; font-size: 11px; background: #0a0a0a; padding: 8px; margin-top: 8px; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Sender</h1>
+<div class="status"><span class="dot" id="dot"></span> <span id="conn">disconnected</span> &nbsp; <span id="counts">S:0 R:0</span></div>
+
+<div class="row">
+  <div class="col">
+    <strong>Column 1</strong>
+    <label>Width <span class="val" id="v1w">4752</span></label>
+    <input type="range" id="col1Width" min="0" max="10000" value="4752" oninput="send()">
+    <label>Background</label>
+    <input type="color" id="col1Color" value="#7FFFD4" oninput="send()">
+    <label>Text</label>
+    <textarea id="text1" oninput="send()">Hello</textarea>
+    <label>Text color</label>
+    <input type="color" id="text1Color" value="#000000" oninput="send()">
+  </div>
+  <div class="col">
+    <strong>Column 2</strong>
+    <label>Width <span class="val" id="v2w">5940</span></label>
+    <input type="range" id="col2Width" min="0" max="10000" value="5940" oninput="send()">
+    <label>Background</label>
+    <input type="color" id="col2Color" value="#7FFFD4" oninput="send()">
+    <label>Text</label>
+    <textarea id="text2" oninput="send()">World</textarea>
+    <label>Text color</label>
+    <input type="color" id="text2Color" value="#000000" oninput="send()">
+  </div>
+</div>
+
+<hr>
+<label>Gap width <span class="val" id="vgw">1901</span></label>
+<input type="range" id="gapWidth" min="0" max="5000" value="1901" oninput="send()">
+<label>Gap color</label>
+<input type="color" id="gapColor" value="#000000" oninput="send()">
+<label>Font size <span class="val" id="vfs">4vw</span></label>
+<input type="range" id="fontSize" min="1" max="20" value="4" step="0.5" oninput="send()">
+
+<hr>
+<div class="checks">
+  <label><input type="checkbox" id="showVideo1" onchange="send()"> Video 1</label>
+  <label><input type="checkbox" id="showVideo2" onchange="send()"> Video 2</label>
+</div>
+
+<hr>
+<div>
+  <button onclick="ping()">Ping x10</button>
+  <button onclick="burst(100)">Burst 100</button>
+  <button onclick="burst(500)">Burst 500</button>
+  <button onclick="stream(30)">Stream 30fps</button>
+  <button onclick="stream(60)">Stream 60fps</button>
+  <button onclick="document.getElementById('results').textContent=''">Clear</button>
+</div>
+<div id="results"></div>
+
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script>
+  const socket = io('https://aspace-elite-server.onrender.com');
+
+  socket.on('connect', () => { document.getElementById('dot').classList.add('on'); document.getElementById('conn').textContent = 'connected'; socket.emit('register', 'sender'); });
+  socket.on('disconnect', () => { document.getElementById('dot').classList.remove('on'); document.getElementById('conn').textContent = 'disconnected'; });
+  socket.on('clients', (d) => { document.getElementById('counts').textContent = `S:${d.senders} R:${d.receivers}`; });
+
+  function val(id) { return document.getElementById(id).value; }
+
+  function getSettings() {
+    document.getElementById('v1w').textContent = val('col1Width');
+    document.getElementById('v2w').textContent = val('col2Width');
+    document.getElementById('vgw').textContent = val('gapWidth');
+    document.getElementById('vfs').textContent = val('fontSize') + 'vw';
+    return {
+      col1Width: +val('col1Width'), col2Width: +val('col2Width'), gapWidth: +val('gapWidth'),
+      col1Color: val('col1Color'), col2Color: val('col2Color'), gapColor: val('gapColor'),
+      text1: val('text1'), text2: val('text2'),
+      text1Color: val('text1Color'), text2Color: val('text2Color'),
+      fontSize: val('fontSize') + 'vw',
+      showVideo1: document.getElementById('showVideo1').checked,
+      showVideo2: document.getElementById('showVideo2').checked
+    };
+  }
+
+  function send() { socket.emit('settings', getSettings()); }
+
+  // Ping
+  let pings = [], pc = 0;
+  function ping() { pings = []; pc = 0; log('--- ping x10 ---'); doPing(); }
+  function doPing() {
+    if (pc >= 10) { const a = pings.reduce((a,b)=>a+b,0)/pings.length; log(`avg=${a.toFixed(1)}ms min=${Math.min(...pings)}ms max=${Math.max(...pings)}ms`); return; }
+    socket.emit('ping-test', { index: pc, sent: Date.now() }); pc++;
+  }
+  socket.on('pong-test', (d) => { const rtt = Date.now()-d.sent; pings.push(rtt); log(`  #${d.index+1}: ${rtt}ms`); setTimeout(doPing, 50); });
+
+  // Burst
+  function burst(n) { log(`--- burst ${n} ---`); const t=Date.now(); for(let i=0;i<n;i++) socket.emit('burst',{index:i,total:n,sent:t}); log(`sent ${n} in ${Date.now()-t}ms`); }
+  socket.on('burst-ack', (d) => { log(`receiver: ${d.total} in ${d.elapsed}ms (${d.rate.toFixed(0)} msg/s)`); });
+
+  // Stream
+  function stream(fps) {
+    const dur=5000, iv=1000/fps; let n=0; const t0=Date.now();
+    log(`--- stream ${fps}fps for 5s ---`);
+    const tm = setInterval(() => {
+      if (Date.now()-t0 >= dur) { clearInterval(tm); log(`sent ${n} frames (${(n/((Date.now()-t0)/1000)).toFixed(1)} fps)`); return; }
+      const h = ((Date.now()-t0)/dur)*360;
+      socket.emit('settings', { ...getSettings(), col1Color: hsl(h), col2Color: hsl(h) }); n++;
+    }, iv);
+  }
+  function hsl(h) { const s=.8,l=.7,a=s*Math.min(l,1-l),f=n=>{const k=(n+h/30)%12;return Math.round(255*(l-a*Math.max(Math.min(k-3,9-k,1),-1))).toString(16).padStart(2,'0');}; return `#${f(0)}${f(8)}${f(4)}`; }
+
+  function log(m) { const el=document.getElementById('results'); el.textContent+=m+'\n'; el.scrollTop=el.scrollHeight; }
+
+  setTimeout(send, 500);
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "aspace-elite",
+  "version": "1.0.0",
+  "description": "Virtual Art API transmission test - WebSocket relay for dual-screen content",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.7.4"
+  }
+}
