@@ -21,6 +21,14 @@
   #latency-display { position: fixed; top: 8px; left: 8px; color: rgba(255,255,255,0.4); font-size: 10px; font-family: monospace; z-index: 1000; }
   #burst-indicator { position: fixed; bottom: 8px; right: 8px; color: rgba(255,255,255,0.4); font-size: 10px; font-family: monospace; z-index: 1000; }
   #logo { position: fixed; bottom: 16px; right: 16px; height: 40px; z-index: 1000; }
+  #shape {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    z-index: 500;
+    pointer-events: none;
+  }
 </style>
 </head>
 <body>
@@ -28,6 +36,7 @@
 <div id="latency-display"></div>
 <div id="burst-indicator"></div>
 <img id="logo" src="logo.png" alt="logo">
+<div id="shape"></div>
 <div id="display">
   <div id="col1" class="column">
     <video id="video1" src="test1.mp4" autoplay muted loop playsinline></video>
@@ -93,6 +102,71 @@
       el.textContent = `burst: ${burstReceived}/${burstTotal}`;
     }
   });
+
+  // Bouncing shape
+  const shape = document.getElementById('shape');
+  const shapes = [
+    () => { shape.style.borderRadius = '0'; shape.style.clipPath = 'none'; },
+    () => { shape.style.borderRadius = '50%'; shape.style.clipPath = 'none'; },
+    () => { shape.style.borderRadius = '0'; shape.style.clipPath = 'polygon(50% 0%, 100% 100%, 0% 100%)'; },
+    () => { shape.style.borderRadius = '0'; shape.style.clipPath = 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)'; },
+    () => { shape.style.borderRadius = '0'; shape.style.clipPath = 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'; },
+  ];
+  let shapeIdx = 0;
+  let sx, sy, svx, svy;
+
+  function initShape() {
+    const r1 = col1.getBoundingClientRect();
+    sx = r1.left + r1.width / 2;
+    sy = window.innerHeight / 2;
+    svx = 3;
+    svy = 2;
+    shapes[0]();
+  }
+
+  function animateShape() {
+    const r1 = col1.getBoundingClientRect();
+    const rg = document.getElementById('gap').getBoundingClientRect();
+    const r2 = col2.getBoundingClientRect();
+    const size = 60;
+
+    sx += svx;
+    sy += svy;
+
+    // Bounce top/bottom
+    if (sy - size / 2 <= 0) { sy = size / 2; svy = Math.abs(svy); }
+    if (sy + size / 2 >= window.innerHeight) { sy = window.innerHeight - size / 2; svy = -Math.abs(svy); }
+
+    // Bounce off gap edges and change shape
+    const inGap = sx > r1.right && sx < r2.left;
+    // Hitting gap from left (leaving col1)
+    if (sx + size / 2 > r1.right && sx - size / 2 < rg.left + rg.width / 2 && svx > 0 && !inGap) {
+      // Let it pass through gap to col2
+    }
+
+    // Bounce off left wall of col1
+    if (sx - size / 2 <= r1.left) {
+      sx = r1.left + size / 2;
+      svx = Math.abs(svx);
+      shapeIdx = (shapeIdx + 1) % shapes.length;
+      shapes[shapeIdx]();
+    }
+
+    // Bounce off right wall of col2
+    if (sx + size / 2 >= r2.right) {
+      sx = r2.right - size / 2;
+      svx = -Math.abs(svx);
+      shapeIdx = (shapeIdx + 1) % shapes.length;
+      shapes[shapeIdx]();
+    }
+
+    shape.style.left = (sx - size / 2) + 'px';
+    shape.style.top = (sy - size / 2) + 'px';
+    requestAnimationFrame(animateShape);
+  }
+
+  initShape();
+  requestAnimationFrame(animateShape);
 </script>
 </body>
 </html>
