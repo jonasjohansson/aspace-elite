@@ -27,6 +27,7 @@
     height: 80px;
     pointer-events: none;
     z-index: 2;
+    mix-blend-mode: difference;
   }
 </style>
 </head>
@@ -85,6 +86,10 @@
     if (data.fontSize !== undefined) { text1.style.fontSize = data.fontSize; text2.style.fontSize = data.fontSize; }
     if (data.showVideo1 !== undefined) video1.className = data.showVideo1 ? 'visible' : '';
     if (data.showVideo2 !== undefined) video2.className = data.showVideo2 ? 'visible' : '';
+    if (data.shapeSpeed !== undefined) shapeSpeed = data.shapeSpeed;
+    if (data.col1Color !== undefined) shape2.style.background = data.col1Color; // red shape on blue col
+    if (data.col2Color !== undefined) shape1.style.background = data.col2Color; // blue shape on red col
+    if (data.pulse) doPulse();
   });
 
   socket.on('ping-test', (data) => { data.receiverGot = Date.now(); socket.emit('pong-test', data); });
@@ -104,9 +109,12 @@
   });
 
   // Twin bouncing shapes — red on blue column, blue on red column
-  const shape1 = document.getElementById('shape1'); // lives in col1, colored blue
-  const shape2 = document.getElementById('shape2'); // lives in col2, colored red
-  const SIZE = 80;
+  const shape1 = document.getElementById('shape1');
+  const shape2 = document.getElementById('shape2');
+  const BASE_SIZE = 80;
+  let shapeSpeed = 3;
+  let currentSize = BASE_SIZE;
+  let pulseTime = 0;
 
   // Shape styles: [clipPath, borderRadius]
   const clipShapes = [
@@ -123,6 +131,8 @@
     el.style.borderRadius = clipShapes[idx][1];
   }
 
+  function doPulse() { pulseTime = Date.now(); }
+
   // Position in viewport coords
   let sx, sy, svx = 3, svy = 2;
 
@@ -137,20 +147,39 @@
   }
 
   function animate() {
+    const dir = svx > 0 ? 1 : -1;
+    const dirY = svy > 0 ? 1 : -1;
+    svx = dir * shapeSpeed;
+    svy = dirY * (shapeSpeed * 0.66);
     sx += svx;
     sy += svy;
+
+    // Pulse: grow and shrink over 400ms
+    if (pulseTime) {
+      const elapsed = Date.now() - pulseTime;
+      if (elapsed < 400) {
+        const t = elapsed / 400;
+        currentSize = BASE_SIZE + 60 * Math.sin(t * Math.PI);
+      } else {
+        currentSize = BASE_SIZE;
+        pulseTime = 0;
+      }
+      shape1.style.width = shape1.style.height = currentSize + 'px';
+      shape2.style.width = shape2.style.height = currentSize + 'px';
+    }
 
     const r1 = col1.getBoundingClientRect();
     const r2 = col2.getBoundingClientRect();
     const h = window.innerHeight;
+    const half = currentSize / 2;
 
     // Bounce top/bottom
-    if (sy - SIZE / 2 <= 0) { sy = SIZE / 2; svy = Math.abs(svy); }
-    if (sy + SIZE / 2 >= h) { sy = h - SIZE / 2; svy = -Math.abs(svy); }
+    if (sy - half <= 0) { sy = half; svy = Math.abs(svy); }
+    if (sy + half >= h) { sy = h - half; svy = -Math.abs(svy); }
 
     // Bounce off left edge of col1
-    if (sx - SIZE / 2 <= r1.left) {
-      sx = r1.left + SIZE / 2;
+    if (sx - half <= r1.left) {
+      sx = r1.left + half;
       svx = Math.abs(svx);
       shapeIdx = (shapeIdx + 1) % clipShapes.length;
       applyClip(shape1, shapeIdx);
@@ -158,8 +187,8 @@
     }
 
     // Bounce off right edge of col2
-    if (sx + SIZE / 2 >= r2.right) {
-      sx = r2.right - SIZE / 2;
+    if (sx + half >= r2.right) {
+      sx = r2.right - half;
       svx = -Math.abs(svx);
       shapeIdx = (shapeIdx + 1) % clipShapes.length;
       applyClip(shape1, shapeIdx);
@@ -167,9 +196,9 @@
     }
 
     // Position relative to each column
-    const localX1 = sx - r1.left - SIZE / 2;
-    const localX2 = sx - r2.left - SIZE / 2;
-    const localY = sy - SIZE / 2;
+    const localX1 = sx - r1.left - half;
+    const localX2 = sx - r2.left - half;
+    const localY = sy - half;
 
     shape1.style.left = localX1 + 'px';
     shape1.style.top = localY + 'px';
