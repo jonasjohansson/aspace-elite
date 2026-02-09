@@ -14,6 +14,10 @@
   .row { display: flex; gap: 16px; }
   .col { flex: 1; }
   .val { font-family: monospace; font-size: 11px; }
+  input[type="number"] { width: 70px; font-family: monospace; font-size: 12px; padding: 2px 4px; }
+  .width-row { display: flex; align-items: center; gap: 6px; }
+  .width-row input[type="range"] { flex: 1; }
+  .reset { font-size: 10px; cursor: pointer; padding: 2px 6px; }
   .status { margin-bottom: 12px; font-size: 11px; }
   .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f44; vertical-align: middle; margin-right: 4px; }
   .dot.on { background: #4f4; }
@@ -28,21 +32,33 @@
 
 <div class="row">
   <div class="col">
-    <label>Col 1 width <span class="val" id="v1w">4752</span></label>
-    <input type="range" id="col1Width" min="0" max="10000" value="4752" oninput="send()">
+    <label>Col 1 width</label>
+    <div class="width-row">
+      <input type="range" id="col1Width" min="0" max="10000" value="4752" oninput="syncNum('col1Width','col1Num');send()">
+      <input type="number" id="col1Num" min="0" max="10000" value="4752" oninput="syncRange('col1Width','col1Num');send()">
+      <button class="reset" onclick="resetWidth('col1Width','col1Num',4752)">reset</button>
+    </div>
     <label>Col 1 text</label>
     <textarea id="text1" oninput="send()">Hello</textarea>
   </div>
   <div class="col">
-    <label>Col 2 width <span class="val" id="v2w">5940</span></label>
-    <input type="range" id="col2Width" min="0" max="10000" value="5940" oninput="send()">
+    <label>Col 2 width</label>
+    <div class="width-row">
+      <input type="range" id="col2Width" min="0" max="10000" value="5940" oninput="syncNum('col2Width','col2Num');send()">
+      <input type="number" id="col2Num" min="0" max="10000" value="5940" oninput="syncRange('col2Width','col2Num');send()">
+      <button class="reset" onclick="resetWidth('col2Width','col2Num',5940)">reset</button>
+    </div>
     <label>Col 2 text</label>
     <textarea id="text2" oninput="send()">World</textarea>
   </div>
 </div>
 
-<label>Gap <span class="val" id="vgw">1901</span></label>
-<input type="range" id="gapWidth" min="0" max="5000" value="1901" oninput="send()">
+<label>Gap</label>
+<div class="width-row">
+  <input type="range" id="gapWidth" min="0" max="5000" value="1901" oninput="syncNum('gapWidth','gapNum');send()">
+  <input type="number" id="gapNum" min="0" max="5000" value="1901" oninput="syncRange('gapWidth','gapNum');send()">
+  <button class="reset" onclick="resetWidth('gapWidth','gapNum',1901)">reset</button>
+</div>
 
 <hr>
 <div class="checks">
@@ -71,10 +87,11 @@
 
   function val(id) { return document.getElementById(id).value; }
 
+  function syncNum(rangeId, numId) { document.getElementById(numId).value = document.getElementById(rangeId).value; }
+  function syncRange(rangeId, numId) { document.getElementById(rangeId).value = document.getElementById(numId).value; }
+  function resetWidth(rangeId, numId, def) { document.getElementById(rangeId).value = def; document.getElementById(numId).value = def; send(); }
+
   function getSettings() {
-    document.getElementById('v1w').textContent = val('col1Width');
-    document.getElementById('v2w').textContent = val('col2Width');
-    document.getElementById('vgw').textContent = val('gapWidth');
     return {
       col1Width: +val('col1Width'), col2Width: +val('col2Width'), gapWidth: +val('gapWidth'),
       text1: val('text1'), text2: val('text2'),
