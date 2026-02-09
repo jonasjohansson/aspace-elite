@@ -80,7 +80,7 @@
     if (data.col2Color !== undefined) col2.style.background = data.col2Color;
     if (data.gapColor !== undefined) gap.style.background = data.gapColor;
     if (data.text1 !== undefined) text1.textContent = data.text1;
-    if (data.text2 !== undefined) text2.textContent = data.text2;
+    if (data.text2 !== undefined) { text2Base = data.text2; }
     if (data.text1Color !== undefined) text1.style.color = data.text1Color;
     if (data.text2Color !== undefined) text2.style.color = data.text2Color;
     if (data.fontSize !== undefined) { text1.style.fontSize = data.fontSize; text2.style.fontSize = data.fontSize; }
@@ -107,6 +107,10 @@
       el.textContent = `burst: ${burstReceived}/${burstTotal}`;
     }
   });
+
+  // FPS counter
+  let frames = 0, lastFpsTime = performance.now(), currentFps = 0;
+  let text2Base = 'World';
 
   // Shape system
   const shape1 = document.getElementById('shape1');
@@ -152,6 +156,15 @@
   }
 
   function animate() {
+    frames++;
+    const now = performance.now();
+    if (now - lastFpsTime >= 500) {
+      currentFps = Math.round(frames / ((now - lastFpsTime) / 1000));
+      frames = 0;
+      lastFpsTime = now;
+      text2.textContent = text2Base + '\n' + currentFps + ' fps';
+    }
+
     const r1 = col1.getBoundingClientRect();
     const r2 = col2.getBoundingClientRect();
     const h = window.innerHeight;
