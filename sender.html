@@ -7,21 +7,20 @@
 <title>Sender</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Inter', sans-serif; background: #111; color: #ccc; padding: 16px; font-size: 13px; }
-  label { display: block; margin: 8px 0 2px; font-size: 11px; color: #888; }
+  body { font-family: 'Inter', sans-serif; padding: 16px; font-size: 13px; }
+  label { display: block; margin: 8px 0 2px; font-size: 11px; }
   input[type="range"] { width: 100%; }
-  textarea { width: 100%; padding: 4px 6px; background: #222; border: 1px solid #333; color: #fff; font-family: inherit; font-size: 13px; height: 40px; resize: vertical; }
+  textarea { width: 100%; padding: 4px 6px; font-family: inherit; font-size: 13px; height: 40px; resize: vertical; }
   .row { display: flex; gap: 16px; }
   .col { flex: 1; }
-  .val { font-family: monospace; font-size: 11px; color: #7FFFD4; }
+  .val { font-family: monospace; font-size: 11px; }
   .status { margin-bottom: 12px; font-size: 11px; }
   .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #f44; vertical-align: middle; margin-right: 4px; }
   .dot.on { background: #4f4; }
-  hr { border: none; border-top: 1px solid #222; margin: 12px 0; }
-  button { padding: 4px 10px; background: #222; border: 1px solid #444; color: #ccc; cursor: pointer; font-size: 12px; font-family: inherit; }
-  button:hover { background: #333; }
-  .checks label { display: inline; margin-right: 12px; font-size: 13px; color: #ccc; }
-  #results { font-family: monospace; font-size: 11px; background: #0a0a0a; padding: 8px; margin-top: 8px; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
+  hr { margin: 12px 0; }
+  button { padding: 4px 10px; cursor: pointer; font-size: 12px; font-family: inherit; }
+  .checks label { display: inline; margin-right: 12px; font-size: 13px; }
+  #results { font-family: monospace; font-size: 11px; padding: 8px; margin-top: 8px; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
 </style>
 </head>
 <body>
