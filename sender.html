@@ -67,6 +67,11 @@
 </div>
 
 <hr>
+<p style="font-size:11px;margin-bottom:8px;line-height:1.5;">
+<b>Ping</b> — measures round-trip latency (sender &rarr; server &rarr; receiver &rarr; server &rarr; sender). Lower is better.<br>
+<b>Burst</b> — fires N messages at once and measures how fast the receiver processes all of them (throughput in msg/s).<br>
+<b>Stream</b> — sends continuous updates at 30 or 60fps for 5 seconds to test sustained real-time performance.
+</p>
 <div>
   <button onclick="ping()">Ping x10</button>
   <button onclick="burst(100)">Burst 100</button>
