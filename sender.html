@@ -92,6 +92,11 @@
     </select>
   </div>
 </div>
+<label>Media fit</label>
+<select id="mediaFit" onchange="send()" style="width:100%;font-size:13px;padding:4px;">
+  <option value="cover">Cover</option>
+  <option value="contain">Contain</option>
+</select>
 
 <hr>
 <p style="font-size:11px;margin-bottom:8px;line-height:1.5;">
@@ -130,6 +135,7 @@
       text1: val('text1'), text2: val('text2'),
       media1: val('media1'),
       media2: val('media2'),
+      mediaFit: val('mediaFit'),
       shapeSpeed: +val('shapeSpeed')
     };
   }

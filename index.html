@@ -96,6 +96,12 @@
       video2.className = data.media2 === 'video' ? 'visible' : '';
       image2.className = data.media2 === 'image' ? 'media visible' : 'media';
     }
+    if (data.mediaFit !== undefined) {
+      video1.style.objectFit = data.mediaFit;
+      video2.style.objectFit = data.mediaFit;
+      image1.style.objectFit = data.mediaFit;
+      image2.style.objectFit = data.mediaFit;
+    }
     if (data.shapeSpeed !== undefined) shapeSpeed = data.shapeSpeed;
     if (data.col1Color !== undefined) { col1Color = data.col1Color; shape2.style.background = data.col1Color; }
     if (data.col2Color !== undefined) { col2Color = data.col2Color; shape1.style.background = data.col2Color; }
