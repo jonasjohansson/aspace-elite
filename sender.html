@@ -74,9 +74,23 @@
 <button onclick="pulse()" style="margin-top:6px;">Bang</button>
 
 <hr>
-<div class="checks">
-  <label><input type="checkbox" id="showVideo1" onchange="send()"> Video 1</label>
-  <label><input type="checkbox" id="showVideo2" onchange="send()"> Video 2</label>
+<div class="row">
+  <div>
+    <label>Left media</label>
+    <select id="media1" onchange="send()" style="width:100%;font-size:13px;padding:4px;">
+      <option value="none">None</option>
+      <option value="video">Video</option>
+      <option value="image">Image</option>
+    </select>
+  </div>
+  <div>
+    <label>Right media</label>
+    <select id="media2" onchange="send()" style="width:100%;font-size:13px;padding:4px;">
+      <option value="none">None</option>
+      <option value="video">Video</option>
+      <option value="image">Image</option>
+    </select>
+  </div>
 </div>
 
 <hr>
@@ -114,8 +128,8 @@
       col1Width: +val('col1Width'), col2Width: +val('col2Width'), gapWidth: +val('gapWidth'),
       col1Color: val('col1Color'), col2Color: val('col2Color'),
       text1: val('text1'), text2: val('text2'),
-      showVideo1: document.getElementById('showVideo1').checked,
-      showVideo2: document.getElementById('showVideo2').checked,
+      media1: val('media1'),
+      media2: val('media2'),
       shapeSpeed: +val('shapeSpeed')
     };
   }

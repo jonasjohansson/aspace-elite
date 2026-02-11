@@ -10,8 +10,8 @@
   html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; }
   #display { display: flex; width: 100vw; height: 100vh; }
   .column { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-  .column video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
-  .column video.visible { display: block; }
+  .column video, .column img.media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+  .column video.visible, .column img.media.visible { display: block; }
   .column-text { position: relative; z-index: 1; font-size: 4vw; font-weight: bold; text-align: center; padding: 2%; word-wrap: break-word; }
   #col1 { background: #ffffff; flex: 4752; }
   #gap { background: #000; flex: 1901; }
@@ -38,13 +38,15 @@
 <img id="logo" src="logo.png" alt="logo">
 <div id="display">
   <div id="col1" class="column">
-    <video id="video1" src="test1.mp4" autoplay muted loop playsinline></video>
+    <video id="video1" src="left.mp4" autoplay muted loop playsinline></video>
+    <img id="image1" class="media" src="left.png" alt="">
     <div class="column-text" id="text1">Hello</div>
     <div class="bouncer" id="shape1"></div>
   </div>
   <div id="gap"></div>
   <div id="col2" class="column">
-    <video id="video2" src="test2.mp4" autoplay muted loop playsinline></video>
+    <video id="video2" src="right.mp4" autoplay muted loop playsinline></video>
+    <img id="image2" class="media" src="right.jpg" alt="">
     <div class="column-text" id="text2">World</div>
     <div class="bouncer" id="shape2"></div>
   </div>
@@ -59,6 +61,8 @@
   const text2 = document.getElementById('text2');
   const video1 = document.getElementById('video1');
   const video2 = document.getElementById('video2');
+  const image1 = document.getElementById('image1');
+  const image2 = document.getElementById('image2');
   let messageCount = 0, lastMessageTime = Date.now();
 
   socket.on('connect', () => {
@@ -84,8 +88,14 @@
     if (data.text1Color !== undefined) text1.style.color = data.text1Color;
     if (data.text2Color !== undefined) text2.style.color = data.text2Color;
     if (data.fontSize !== undefined) { text1.style.fontSize = data.fontSize; text2.style.fontSize = data.fontSize; }
-    if (data.showVideo1 !== undefined) video1.className = data.showVideo1 ? 'visible' : '';
-    if (data.showVideo2 !== undefined) video2.className = data.showVideo2 ? 'visible' : '';
+    if (data.media1 !== undefined) {
+      video1.className = data.media1 === 'video' ? 'visible' : '';
+      image1.className = data.media1 === 'image' ? 'media visible' : 'media';
+    }
+    if (data.media2 !== undefined) {
+      video2.className = data.media2 === 'video' ? 'visible' : '';
+      image2.className = data.media2 === 'image' ? 'media visible' : 'media';
+    }
     if (data.shapeSpeed !== undefined) shapeSpeed = data.shapeSpeed;
     if (data.col1Color !== undefined) { col1Color = data.col1Color; shape2.style.background = data.col1Color; }
     if (data.col2Color !== undefined) { col2Color = data.col2Color; shape1.style.background = data.col2Color; }
