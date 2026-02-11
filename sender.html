@@ -3,12 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <title>Sender</title>
 <style>
+  @font-face {
+    font-family: 'PP NeueBit';
+    src: url('fonts/PPNeueBit-Regular.woff2') format('woff2'),
+        url('fonts/PPNeueBit-Regular.woff') format('woff'),
+        url('fonts/PPNeueBit-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
-  body { font-family: 'Inter', sans-serif; padding: 12px; font-size: 13px; display: flex; flex-direction: column; }
+  body { font-family: 'PP NeueBit', sans-serif; padding: 12px; font-size: 13px; display: flex; flex-direction: column; }
   label { display: block; margin: 6px 0 2px; font-size: 11px; }
   input[type="range"] { width: 100%; }
   textarea { width: 100%; padding: 4px 6px; font-family: inherit; font-size: 16px; height: 40px; resize: vertical; }
@@ -64,9 +72,9 @@
 
 <label>Gap</label>
 <div class="width-row">
-  <input type="range" id="gapWidth" min="0" max="5000" value="1901" oninput="syncNum('gapWidth','gapNum');send()">
-  <input type="number" id="gapNum" min="0" max="5000" value="1901" oninput="syncRange('gapWidth','gapNum');send()">
-  <button class="reset" onclick="resetWidth('gapWidth','gapNum',1901)">reset</button>
+  <input type="range" id="gapWidth" min="0" max="5000" value="0" oninput="syncNum('gapWidth','gapNum');send()">
+  <input type="number" id="gapNum" min="0" max="5000" value="0" oninput="syncRange('gapWidth','gapNum');send()">
+  <button class="reset" onclick="resetWidth('gapWidth','gapNum',0)">reset</button>
 </div>
 
 <label>Shape speed <span class="val" id="vspeed">3</span></label>

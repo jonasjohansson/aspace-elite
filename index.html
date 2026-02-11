@@ -3,18 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <title>Receiver</title>
 <style>
+  @font-face {
+    font-family: 'PP NeueBit';
+    src: url('fonts/PPNeueBit-Regular.woff2') format('woff2'),
+        url('fonts/PPNeueBit-Regular.woff') format('woff'),
+        url('fonts/PPNeueBit-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'PP NeueBit', sans-serif; }
   #display { display: flex; width: 100vw; height: 100vh; }
   .column { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .column video, .column img.media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
   .column video.visible, .column img.media.visible { display: block; }
   .column-text { position: relative; z-index: 1; font-size: 4vw; font-weight: bold; text-align: center; padding: 2%; word-wrap: break-word; }
   #col1 { background: #ffffff; flex: 4752; }
-  #gap { background: #000; flex: 1901; }
+  #gap { background: #000; flex: 0; }
   #col2 { background: #0000ff; flex: 5940; }
   #status { position: fixed; top: 8px; right: 8px; width: 10px; height: 10px; border-radius: 50%; background: #f44; z-index: 1000; }
   #status.connected { background: #4f4; }
